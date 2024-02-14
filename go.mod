@@ -14,6 +14,7 @@ require (
 require (
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect

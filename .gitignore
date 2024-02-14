@@ -2,3 +2,4 @@ node_modules/
 frontend/build/
 */.DS_Store
 .DS_Store
+*.db

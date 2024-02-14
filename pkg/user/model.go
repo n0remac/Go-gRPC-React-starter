@@ -3,7 +3,6 @@ package user
 import (
 	"Go-gRPC-React-starter/gen/proto/user"
 	"Go-gRPC-React-starter/pkg/database"
-	"fmt"
 	"log/slog"
 
 	"github.com/upper/db/v4"
@@ -42,13 +41,13 @@ func getUserFromDBByUsername(username string) (*user.User, error) {
 
 	// Find the user with the given username
 	res := sess.Collection("users").Find(db.Cond{"username": username})
-	fmt.Print(res.Count())
+
 	err := res.One(&dbUser)
 	if err != nil {
 		slog.Error("Error getting user from DB", "error", err)
 		return nil, err
 	}
-	fmt.Println("DB User:", dbUser.Username)
+
 	// Convert the database user to a protobuf user
 	u := &user.User{
 		Id:       int32(dbUser.ID),

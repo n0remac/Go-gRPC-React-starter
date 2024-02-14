@@ -22,7 +22,7 @@ func (s *UserService) Login(ctx context.Context, req *connect.Request[user.Login
     if err != nil {
         return nil, err
     }
-	fmt.Println("User:", u)
+	
     passHashStatus, err := checkPasswordHash(req.Msg.Password, u.Password)
     if err != nil || !passHashStatus {
         return nil, connect.NewError(connect.CodeUnauthenticated, fmt.Errorf("invalid username or password"))

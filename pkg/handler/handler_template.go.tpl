@@ -4,41 +4,57 @@ package handler
 import (
     "context"
     "reflect"
-    "{{.ProtoPackage}}"
-    "{{.ServicePackage}}"
+    "{{.ProtoImportPath}}"
+    "{{.ServiceImportPath}}"
     "github.com/bufbuild/connect-go"
 )
 
 type {{.ServiceName}}Handler struct {
-    service {{.ServicePackage}}.CRUDService[{{.ProtoPackage}}.{{.ServiceType}}]
+    service {{.ServiceImportAlias}}.CRUDService[{{.ProtoImportAlias}}.{{.ServiceType}}]
 }
 
-func New{{.ServiceName}}Handler(svc {{.ServicePackage}}.CRUDService[{{.ProtoPackage}}.{{.ServiceType}}]) *{{.ServiceName}}Handler {
+func New{{.ServiceName}}Handler(svc {{.ServiceImportAlias}}.CRUDService[{{.ProtoImportAlias}}.{{.ServiceType}}]) *{{.ServiceName}}Handler {
     return &{{.ServiceName}}Handler{service: svc}
 }
 
-func (h *{{.ServiceName}}Handler) handleRequest[T any, R any](ctx context.Context, req *connect.Request[T], handlerFunc interface{}) (*connect.Response[R], error) {
+func (h *{{.ServiceName}}Handler) handleRequest(ctx context.Context, req interface{}, handlerFunc interface{}) (interface{}, error) {
     handlerValue := reflect.ValueOf(handlerFunc)
-    result := handlerValue.Call([]reflect.Value{reflect.ValueOf(ctx), reflect.ValueOf(req.Msg)})
+    result := handlerValue.Call([]reflect.Value{reflect.ValueOf(ctx), reflect.ValueOf(req)})
 
     if err := result[1].Interface(); err != nil {
         return nil, err.(error)
     }
-    return connect.NewResponse(result[0].Interface().(R)), nil
+    return result[0].Interface(), nil
 }
 
-func (h *{{.ServiceName}}Handler) Create{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoPackage}}.Create{{.ServiceType}}Request]) (*connect.Response[{{.ProtoPackage}}.Create{{.ServiceType}}Response], error) {
-    return h.handleRequest(ctx, req, h.service.Create)
+func (h *{{.ServiceName}}Handler) Create{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoImportAlias}}.Create{{.ServiceType}}Request]) (*connect.Response[{{.ProtoImportAlias}}.Create{{.ServiceType}}Response], error) {
+    res, err := h.handleRequest(ctx, req.Msg, h.service.Create)
+    if err != nil {
+        return nil, err
+    }
+    return connect.NewResponse(res.(*{{.ProtoImportAlias}}.Create{{.ServiceType}}Response)), nil
 }
 
-func (h *{{.ServiceName}}Handler) Get{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoPackage}}.Get{{.ServiceType}}Request]) (*connect.Response[{{.ProtoPackage}}.Get{{.ServiceType}}Response], error) {
-    return h.handleRequest(ctx, req, h.service.Get)
+func (h *{{.ServiceName}}Handler) Get{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoImportAlias}}.Get{{.ServiceType}}Request]) (*connect.Response[{{.ProtoImportAlias}}.Get{{.ServiceType}}Response], error) {
+    res, err := h.handleRequest(ctx, req.Msg, h.service.Get)
+    if err != nil {
+        return nil, err
+    }
+    return connect.NewResponse(res.(*{{.ProtoImportAlias}}.Get{{.ServiceType}}Response)), nil
 }
 
-func (h *{{.ServiceName}}Handler) Update{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoPackage}}.Update{{.ServiceType}}Request]) (*connect.Response[{{.ProtoPackage}}.Update{{.ServiceType}}Response], error) {
-    return h.handleRequest(ctx, req, h.service.Update)
+func (h *{{.ServiceName}}Handler) Update{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoImportAlias}}.Update{{.ServiceType}}Request]) (*connect.Response[{{.ProtoImportAlias}}.Update{{.ServiceType}}Response], error) {
+    res, err := h.handleRequest(ctx, req.Msg, h.service.Update)
+    if err != nil {
+        return nil, err
+    }
+    return connect.NewResponse(res.(*{{.ProtoImportAlias}}.Update{{.ServiceType}}Response)), nil
 }
 
-func (h *{{.ServiceName}}Handler) Delete{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoPackage}}.Delete{{.ServiceType}}Request]) (*connect.Response[{{.ProtoPackage}}.Delete{{.ServiceType}}Response], error) {
-    return h.handleRequest(ctx, req, h.service.Remove)
+func (h *{{.ServiceName}}Handler) Delete{{.ServiceType}}(ctx context.Context, req *connect.Request[{{.ProtoImportAlias}}.Delete{{.ServiceType}}Request]) (*connect.Response[{{.ProtoImportAlias}}.Delete{{.ServiceType}}Response], error) {
+    res, err := h.handleRequest(ctx, req.Msg, h.service.Remove)
+    if err != nil {
+        return nil, err
+    }
+    return connect.NewResponse(res.(*{{.ProtoImportAlias}}.Delete{{.ServiceType}}Response)), nil
 }

@@ -6,18 +6,22 @@ import (
 )
 
 type HandlerData struct {
-    ProtoPackage   string
-    ServicePackage string
-    ServiceName    string
-    ServiceType    string
+    ProtoImportPath   string
+    ServiceImportPath string
+    ProtoImportAlias  string
+    ServiceImportAlias string
+    ServiceName       string
+    ServiceType       string
 }
 
 func main() {
     data := HandlerData{
-        ProtoPackage:   "user/gen/proto/user",
-        ServicePackage: "user/service",
-        ServiceName:    "UserService",
-        ServiceType:    "User",
+        ProtoImportPath:   "Go-gRPC-React-startergen/proto/user",
+        ServiceImportPath: "Go-gRPC-React-starterservice",
+        ProtoImportAlias:  "user",
+        ServiceImportAlias: "userservice",
+        ServiceName:       "UserService",
+        ServiceType:       "User",
     }
 
     tmpl, err := template.ParseFiles("handler_template.go.tpl")

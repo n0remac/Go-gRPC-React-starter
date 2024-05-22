@@ -1,8 +1,6 @@
 package {{.PackageName}}
 
 import (
-    "context"
-    "github.com/upper/db/v4"
     "Go-gRPC-React-starter/pkg/core/model"
     "Go-gRPC-React-starter/gen/proto/{{.PackageName}}"
 )
@@ -13,18 +11,21 @@ type {{.ModelName}} struct {
 {{- end }}
 }
 
-func New{{.ModelName}}Model(sess db.Session) *model.GenericModel[{{.ModelName}}] {
-    return model.NewGenericModel[{{.ModelName}}]("{{ .TableName }}", sess)
+type {{.ModelName}}Model struct {
+    genericModel *model.GenericModel[{{.ModelName}}]
 }
 
-func create{{.ModelName}}(ctx context.Context, sess db.Session, item *{{.PackageName}}.{{.ModelName}}) (*{{.PackageName}}.{{.ModelName}}, error) {
-    m := New{{.ModelName}}Model(sess)
+func New{{.ModelName}}Model() *{{.ModelName}}Model {
+    return &{{.ModelName}}Model{genericModel: model.NewGenericModel[{{.ModelName}}]("{{ .TableName }}")}
+}
+
+func (m *{{.ModelName}}Model) Create(item *{{.PackageName}}.{{.ModelName}}) (*{{.PackageName}}.{{.ModelName}}, error) {
     dbItem := &{{.ModelName}}{
 {{- range .Fields }}
         {{ .Name | title }}: item.{{ .Name | title }},
 {{- end }}
     }
-    createdItem, err := m.Create(ctx, *dbItem)
+    createdItem, err := m.genericModel.Create(*dbItem)
     if err != nil {
         return nil, err
     }
@@ -35,9 +36,8 @@ func create{{.ModelName}}(ctx context.Context, sess db.Session, item *{{.Package
     }, nil
 }
 
-func get{{.ModelName}}ByID(ctx context.Context, sess db.Session, id int32) (*{{.PackageName}}.{{.ModelName}}, error) {
-    m := New{{.ModelName}}Model(sess)
-    dbItem, err := m.GetByID(ctx, id)
+func (m *{{.ModelName}}Model) GetByID(id int32) (*{{.PackageName}}.{{.ModelName}}, error) {
+    dbItem, err := m.genericModel.GetByID(id)
     if err != nil {
         return nil, err
     }
@@ -48,14 +48,13 @@ func get{{.ModelName}}ByID(ctx context.Context, sess db.Session, id int32) (*{{.
     }, nil
 }
 
-func update{{.ModelName}}(ctx context.Context, sess db.Session, item *{{.PackageName}}.{{.ModelName}}) (*{{.PackageName}}.{{.ModelName}}, error) {
-    m := New{{.ModelName}}Model(sess)
+func (m *{{.ModelName}}Model) Update(item *{{.PackageName}}.{{.ModelName}}) (*{{.PackageName}}.{{.ModelName}}, error) {
     dbItem := &{{.ModelName}}{
 {{- range .Fields }}
         {{ .Name | title }}: item.{{ .Name | title }},
 {{- end }}
     }
-    updatedItem, err := m.Update(ctx, *dbItem)
+    updatedItem, err := m.genericModel.Update(*dbItem)
     if err != nil {
         return nil, err
     }
@@ -66,7 +65,6 @@ func update{{.ModelName}}(ctx context.Context, sess db.Session, item *{{.Package
     }, nil
 }
 
-func delete{{.ModelName}}(ctx context.Context, sess db.Session, id int32) error {
-    m := New{{.ModelName}}Model(sess)
-    return m.Delete(ctx, id)
+func (m *{{.ModelName}}Model) Delete(id int32) error {
+    return m.genericModel.Delete(id)
 }

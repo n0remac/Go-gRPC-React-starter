@@ -2,8 +2,8 @@ package service
 
 import (
     "fmt"
-	"context"
-	"reflect"
+    "context"
+    "reflect"
 )
 
 type GenericService[T any] struct {
@@ -30,7 +30,6 @@ func (s *GenericService[T]) Get(ctx context.Context, id int32) (T, error) {
 }
 
 func (s *GenericService[T]) Update(ctx context.Context, item T) (T, error) {
-    // Assuming item has an ID field, which should be part of T's definition
     id := extractID(item)
     s.store[id] = item
     return item, nil
@@ -52,12 +51,12 @@ func extractID[T any](item T) int32 {
     if v.Kind() != reflect.Struct {
         panic("extractID expects a struct or a pointer to a struct")
     }
-    field := v.FieldByName("ID")
+    field := v.FieldByName("Id")
     if !field.IsValid() {
-        panic("ID field not found")
+        panic("Id field not found")
     }
     if field.Kind() != reflect.Int32 {
-        panic("ID field is not of type int32")
+        panic("Id field is not of type int32")
     }
     return int32(field.Int())
 }

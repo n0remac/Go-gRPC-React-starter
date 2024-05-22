@@ -28,7 +28,7 @@ type Schema struct {
 }
 
 func main() {
-	file, err := os.Open("schema.yaml")
+	file, err := os.Open("../schema.yaml")
 	if err != nil {
 		panic(err)
 	}

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateUserRequest, CreateUserResponse, DeleteUserRequest, DeleteUserResponse, GetUserRequest, GetUserResponse, LoginRequest, LoginResponse, UpdateUserRequest, UpdateUserResponse } from "./user_pb.js";
+import { CreateUserRequest, CreateUserResponse, DeleteUserRequest, DeleteUserResponse, GetUserRequest, GetUserResponse, UpdateUserRequest, UpdateUserResponse } from "./user_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -48,15 +48,6 @@ export const UserService = {
       name: "DeleteUser",
       I: DeleteUserRequest,
       O: DeleteUserResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc user.UserService.Login
-     */
-    login: {
-      name: "Login",
-      I: LoginRequest,
-      O: LoginResponse,
       kind: MethodKind.Unary,
     },
   }

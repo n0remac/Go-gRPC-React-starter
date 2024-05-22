@@ -8,6 +8,8 @@ import (
 	"strings"
 	"text/template"
 
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"gopkg.in/yaml.v3"
 )
 
@@ -25,6 +27,11 @@ type Model struct {
 
 type Schema struct {
 	Models []Model `yaml:"models"`
+}
+
+func titleCase(s string) string {
+	c := cases.Title(language.English)
+	return c.String(s)
 }
 
 func main() {
@@ -48,13 +55,14 @@ func main() {
 	tmplPath := "templates/template.go.tpl"
 	tmpl, err := template.New("template.go.tpl").Funcs(template.FuncMap{
 		"lower": strings.ToLower,
+		"title": titleCase,
 	}).ParseFiles(tmplPath)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, model := range schema.Models {
-		outputFilePath := filepath.Join("gen", "model", strings.ToLower(model.Name)+".go")
+		outputFilePath := filepath.Join("../../", "generated", strings.ToLower(model.Name), "model.go")
 		outputDir := filepath.Dir(outputFilePath)
 		if err := os.MkdirAll(outputDir, 0755); err != nil {
 			panic(err)

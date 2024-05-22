@@ -23,27 +23,34 @@ func main() {
 		ServiceType:       "User",
 	}
 
-	tmplPath := "service/templates/template.go.tpl"
-	outputFilePath := "../generated/user/service.go"
-
-	tmpl, err := template.ParseFiles(tmplPath)
-	if err != nil {
-		panic(err)
+	templates := []struct {
+		tmplPath       string
+		outputFilePath string
+	}{
+		{"service/templates/template.go.tpl", "../generated/user/service.go"},
+		{"service/templates/template_test.go.tpl", "../generated/user/service_test.go"},
 	}
 
-	outputDir := filepath.Dir(outputFilePath)
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		panic(err)
-	}
+	for _, t := range templates {
+		tmpl, err := template.ParseFiles(t.tmplPath)
+		if err != nil {
+			panic(err)
+		}
 
-	file, err := os.Create(outputFilePath)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
+		outputDir := filepath.Dir(t.outputFilePath)
+		if err := os.MkdirAll(outputDir, 0755); err != nil {
+			panic(err)
+		}
 
-	err = tmpl.Execute(file, data)
-	if err != nil {
-		panic(err)
+		file, err := os.Create(t.outputFilePath)
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+
+		err = tmpl.Execute(file, data)
+		if err != nil {
+			panic(err)
+		}
 	}
 }

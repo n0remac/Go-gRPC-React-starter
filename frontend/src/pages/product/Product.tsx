@@ -3,20 +3,30 @@ import { productService } from '../../service';
 import { CreateProductRequest, GetProductRequest, UpdateProductRequest, DeleteProductRequest, Product } from '../../rpc/proto/product/product_pb';
 
 const ProductPage = () => {
-    const [product, setProduct] = useState<Product>(new Product());
+    const [product, setProduct] = useState(new Product());
     const [searchId, setSearchId] = useState<string>('');
     const [searchResult, setSearchResult] = useState<Product | null>(null);
     const [status, setStatus] = useState<string>('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setProduct({ ...product, [name]: value });
+        const parsedValue = name === "id" || name === "amount" ? parseInt(value, 10) : value;
+        setProduct(prevProduct => {
+            const updatedProduct = { ...prevProduct } as Product;
+            (updatedProduct as any)[name] = parsedValue;
+            return updatedProduct;
+        });
     };
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         const request = new CreateProductRequest();
-        request.product = product;
+        request.product = new Product();
+        request.product.name = product.name;
+        request.product.amount = product.amount;
+        request.product.description = product.description;
+
+        console.log('Creating product:', request.product);
         try {
             await productService.createProduct(request, {});
             setStatus('Product created successfully');
@@ -32,7 +42,7 @@ const ProductPage = () => {
         request.id = parseInt(searchId, 10);
         try {
             const response = await productService.getProduct(request, {});
-            setSearchResult(response.product);
+            setSearchResult(response.product as Product);
         } catch (error) {
             console.error('Error fetching product:', error);
             setSearchResult(null);
@@ -43,7 +53,12 @@ const ProductPage = () => {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         const request = new UpdateProductRequest();
-        request.product = product;
+        request.product = new Product();
+        request.product.id = product.id;
+        request.product.name = product.name;
+        request.product.amount = product.amount;
+        request.product.description = product.description;
+        console.log('Updating product:', request.product);
         try {
             await productService.updateProduct(request, {});
             setStatus('Product updated successfully');
@@ -57,6 +72,7 @@ const ProductPage = () => {
         e.preventDefault();
         const request = new DeleteProductRequest();
         request.id = parseInt(searchId, 10);
+        
         try {
             await productService.deleteProduct(request, {});
             setStatus('Product deleted successfully');

@@ -3,8 +3,10 @@ package main
 //go:generate npx buf generate
 
 import (
+	"Go-gRPC-React-starter/gen/proto/product/productconnect"
 	"Go-gRPC-React-starter/gen/proto/user/userconnect"
 	"Go-gRPC-React-starter/pkg/database"
+	"Go-gRPC-React-starter/pkg/product"
 	"Go-gRPC-React-starter/pkg/user"
 	"context"
 	"fmt"
@@ -50,14 +52,17 @@ func main() {
 
 	database.InitDB()
 	userService := &user.UserService{}
+	productService := &product.ProductService{}
 
 	imageServer := http.FileServer(http.Dir("./pkg/images"))
 	apiRoot.Handle("/images/", http.StripPrefix("/images/", imageServer))
 
 	apiRoot.Handle(userconnect.NewUserServiceHandler(userService, interceptors))
+	apiRoot.Handle(productconnect.NewProductServiceHandler(productService, interceptors))
 
 	reflector := grpcreflect.NewStaticReflector(
 		"user.userService",
+		"product.productService",
 	)
 
 	recoverCall := func(_ context.Context, spec connect.Spec, _ http.Header, p any) error {

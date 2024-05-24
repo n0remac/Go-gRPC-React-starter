@@ -3,15 +3,16 @@ package product
 import (
 	"Go-gRPC-React-starter/gen/proto/product"
 	"Go-gRPC-React-starter/pkg/database"
+	"fmt"
 	"reflect"
 
 	"github.com/upper/db/v4"
 )
 
 type Product struct {
-	ID int `db:"id,omitempty"`
-	Name string `db:"name"`
-	Amount int `db:"amount"`
+	ID          int    `db:"id,omitempty"`
+	Name        string `db:"name"`
+	Amount      int    `db:"amount"`
 	Description string `db:"description"`
 }
 
@@ -85,7 +86,7 @@ func getProductFromDB(id int32) (*product.Product, error) {
 func updateProductInDB(m *product.Product) (*product.Product, error) {
 	sess := database.GetSession()
 	var dbProduct Product
-
+	fmt.Println("m", m)
 	res := sess.Collection("products").Find(db.Cond{"id": m.Id})
 	err := res.One(&dbProduct)
 	if err != nil {

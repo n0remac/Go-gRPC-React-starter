@@ -3,6 +3,7 @@ package product
 import (
 	"Go-gRPC-React-starter/gen/proto/product"
 	"context"
+	"fmt"
 
 	"github.com/bufbuild/connect-go"
 )
@@ -12,7 +13,9 @@ type ProductService struct {
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, req *connect.Request[product.CreateProductRequest]) (*connect.Response[product.CreateProductResponse], error) {
+	fmt.Println("CreateProduct called")
 	newProduct, err := createProduct(req.Msg.Product)
+	fmt.Println("newProduct", newProduct)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +37,9 @@ func (s *ProductService) GetProduct(ctx context.Context, req *connect.Request[pr
 }
 
 func (s *ProductService) UpdateProduct(ctx context.Context, req *connect.Request[product.UpdateProductRequest]) (*connect.Response[product.UpdateProductResponse], error) {
+	fmt.Println("req.msg", req.Msg)
 	updatedProduct, err := updateProductInDB(req.Msg.Product)
+	fmt.Println("updatedProduct", updatedProduct)
 	if err != nil {
 		return nil, err
 	}

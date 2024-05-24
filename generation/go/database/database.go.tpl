@@ -1,4 +1,4 @@
-package {{.ModelName | lower}}
+package database
 
 func create{{.ModelName}}Table() {
 	// SQL command to create the {{.ModelName}} table

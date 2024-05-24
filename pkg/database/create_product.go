@@ -1,4 +1,4 @@
-package product
+package database
 
 func createProductTable() {
 	// SQL command to create the Product table

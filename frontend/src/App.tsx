@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Login from './pages/user/Login';
 import Register from './pages/user/Register';
+import ProductPage from './pages/product/Product';
 
 export default function App() {
     return (
@@ -22,6 +23,7 @@ export default function App() {
                 <Routes>
                     <Route path="/login" element={< Login />} />
                     <Route path="/register" element={< Register />} />
+                    <Route path="/product" element={< ProductPage />} />
                 </Routes>
             </div>
         </Router>

@@ -23,6 +23,20 @@ func InitDB() {
 
 	// Now, let's create the Users table
 	createUsersTable()
+	createProductTable()
+}
+
+func createProductTable() {
+	// SQL command to create the Product table
+	sqlCommand := `
+CREATE TABLE IF NOT EXISTS Products (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  amount INTEGER NOT NULL,
+  description TEXT NOT NULL,
+);`
+
+	createTable(sqlCommand)
 }
 
 func createUsersTable() {
@@ -35,12 +49,16 @@ CREATE TABLE IF NOT EXISTS Users (
   password TEXT NOT NULL
 );`
 
+	createTable(sqlCommand)
+}
+
+func createTable(sqlCommand string) {
 	// Execute the SQL command
 	_, err := sess.SQL().Exec(sqlCommand)
 	if err != nil {
-		log.Fatalf("Failed to create Users table: %v", err)
+		log.Fatalf("Failed to create table: %v", err)
 	} else {
-		log.Println("Users table created successfully")
+		log.Println("Table created successfully")
 	}
 }
 

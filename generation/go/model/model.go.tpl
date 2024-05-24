@@ -60,10 +60,12 @@ func create{{.ModelName}}(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelNa
 	sess := database.GetSession()
 	new{{.ModelName}} := protoToDB(m, &{{.ModelName}}{}).(*{{.ModelName}})
 
-	_, err := sess.Collection("{{.ModelName | lower}}s").Insert(new{{.ModelName}})
+	err := sess.Collection("{{.ModelName | lower}}s").InsertReturning(new{{.ModelName}})
 	if err != nil {
 		return nil, err
 	}
+
+	m.Id = int32(new{{.ModelName}}.ID)
 	return m, nil
 }
 
@@ -78,6 +80,7 @@ func get{{.ModelName}}FromDB(id int32) (*{{.ModelName | lower}}.{{.ModelName}}, 
 	}
 
 	m := dbToProto(&db{{.ModelName}}, &{{.ModelName | lower}}.{{.ModelName}}{}).(*{{.ModelName | lower}}.{{.ModelName}})
+	m.Id = int32(db{{.ModelName}}.ID)
 	return m, nil
 }
 

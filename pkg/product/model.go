@@ -62,7 +62,9 @@ func createProduct(m *product.Product) (*product.Product, error) {
 	sess := database.GetSession()
 	newProduct := protoToDB(m, &Product{}).(*Product)
 
-	_, err := sess.Collection("products").Insert(newProduct)
+	err := sess.Collection("products").InsertReturning(newProduct)
+	m.Id = int32(newProduct.ID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +82,7 @@ func getProductFromDB(id int32) (*product.Product, error) {
 	}
 
 	m := dbToProto(&dbProduct, &product.Product{}).(*product.Product)
+	m.Id = int32(dbProduct.ID)
 	return m, nil
 }
 

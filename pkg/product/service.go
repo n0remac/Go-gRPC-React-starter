@@ -13,7 +13,6 @@ type ProductService struct {
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, req *connect.Request[product.CreateProductRequest]) (*connect.Response[product.CreateProductResponse], error) {
-	fmt.Println("CreateProduct called")
 	newProduct, err := createProduct(req.Msg.Product)
 	fmt.Println("newProduct", newProduct)
 	if err != nil {

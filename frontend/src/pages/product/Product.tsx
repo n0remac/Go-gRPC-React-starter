@@ -42,6 +42,7 @@ const ProductPage = () => {
         request.id = parseInt(searchId, 10);
         try {
             const response = await productService.getProduct(request, {});
+            console.log('Fetched product:', response.product);
             setSearchResult(response.product as Product);
         } catch (error) {
             console.error('Error fetching product:', error);
@@ -71,8 +72,8 @@ const ProductPage = () => {
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
         const request = new DeleteProductRequest();
-        request.id = parseInt(searchId, 10);
-        
+        request.id = product.id;
+
         try {
             await productService.deleteProduct(request, {});
             setStatus('Product deleted successfully');

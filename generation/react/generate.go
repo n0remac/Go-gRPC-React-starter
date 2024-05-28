@@ -33,6 +33,10 @@ func title(s string) string {
 	return cases.Title(language.English).String(s)
 }
 
+func wrapInBraces(s string) string {
+	return "{" + s + "}"
+}
+
 func main() {
 	file, err := os.Open("../schema.yaml")
 	if err != nil {
@@ -55,6 +59,7 @@ func main() {
 	tmpl, err := template.New("admin.tsx.tpl").Funcs(template.FuncMap{
 		"lower": strings.ToLower,
 		"title": title,
+		"wrapInBraces": wrapInBraces,
 	}).ParseFiles(tmplPath)
 	if err != nil {
 		panic(err)

@@ -28,8 +28,8 @@ const {{.ModelName}}Page = () => {
         e.preventDefault();
         const request = new Create{{.ModelName}}Request();
         request.{{.ModelName | lower}} = new {{.ModelName}}();
-{{ range .Fields }}        const {{.Name}} = {{$.ModelName | lower}}.{{.Name}};
-        request.{{$.ModelName | lower}}.{{.Name}} = {{.Name}};
+{{ range .Fields }}
+        request.{{$.ModelName | lower}}.{{.Name}} = {{$.ModelName | lower}}.{{.Name}};
 {{ end }}
 
         console.log('Creating {{.ModelName | lower}}:', request.{{.ModelName | lower}});
@@ -62,8 +62,8 @@ const {{.ModelName}}Page = () => {
         const request = new Update{{.ModelName}}Request();
         request.{{.ModelName | lower}} = new {{.ModelName}}();
         request.{{.ModelName | lower}}.id = {{.ModelName | lower}}.id;
-{{ range .Fields }}        const {{.Name}} = {{$.ModelName | lower}}.{{.Name}};
-        request.{{$.ModelName | lower}}.{{.Name}} = {{.Name}};
+{{ range .Fields }}
+        request.{{$.ModelName | lower}}.{{.Name}} = {{$.ModelName | lower}}.{{.Name}};
 {{ end }}
         console.log('Updating {{.ModelName | lower}}:', request.{{.ModelName | lower}});
         try {
@@ -93,29 +93,54 @@ const {{.ModelName}}Page = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">{{.ModelName}} Management</h1>
             <form onSubmit={handleCreate}>
-{{ range .Fields }}                <input type="text" name="{{.Name}}" value={{{{{$.ModelName | lower}}.{{.Name}}}}} onChange={handleChange} placeholder="{{.Name | title}}" />
+{{ range .Fields }}
+                <input 
+                    type="text" 
+                    name="{{.Name}}" 
+                    value={{wrapInBraces (printf "%s.%s" ($.ModelName | lower) .Name)}}
+                    onChange={handleChange} 
+                    placeholder="{{.Name | title}}" 
+                />
 {{ end }}
                 <button type="submit">Create {{.ModelName}}</button>
             </form>
             <form onSubmit={handleGet}>
-                <input type="text" value={searchId} onChange={e => setSearchId(e.target.value)} placeholder="{{.ModelName}} ID" />
+                <input 
+                    type="text" 
+                    value={searchId} 
+                    onChange={e => setSearchId(e.target.value)} 
+                    placeholder="{{.ModelName}} ID" 
+                />
                 <button type="submit">Get {{.ModelName}}</button>
             </form>
             {searchResult && (
                 <div>
                     <h3>Search Result:</h3>
                     <p>ID: {searchResult.id}</p>
-{{ range .Fields }}                    <p>{{.Name | title}}: {searchResult.{{.Name}}}</p>
+{{ range .Fields }}
+                    <p>{{.Name | title}}: {searchResult.{{.Name}}}</p>
 {{ end }}
                 </div>
             )}
             <form onSubmit={handleUpdate}>
-{{ range .Fields }}                <input type="text" name="{{.Name}}" value={{{{{$.ModelName | lower}}.{{.Name}}}}} onChange={handleChange} placeholder="{{.Name | title}}" />
+{{ range .Fields }}
+                <input 
+                    type="text" 
+                    name="{{.Name}}" 
+                    value={{wrapInBraces (printf "%s.%s" ($.ModelName | lower) .Name)}}
+                    onChange={handleChange} 
+                    placeholder="{{.Name | title}}" 
+                />
 {{ end }}
                 <button type="submit">Update {{.ModelName}}</button>
             </form>
             <form onSubmit={handleDelete}>
-                <input type="text" value={searchId} onChange={e => setSearchId(e.target.value)} placeholder="{{.ModelName}} ID" />
+                <input 
+                    type="text" 
+                    value={searchId} 
+                    onChange={e => setSearchId(e.target.value)} 
+                    placeholder="{{.ModelName}} ID" 
+                />
                 <button type="submit">Delete {{.ModelName}}</button>
             </form>
             {status && <p>{status}</p>}

@@ -1,4 +1,4 @@
-package product
+package model
 
 import (
 	"Go-gRPC-React-starter/gen/proto/product"
@@ -57,7 +57,7 @@ func dbToProto(dbStruct interface{}, protoMsg interface{}) interface{} {
 	return protoMsg
 }
 
-func createProduct(m *product.Product) (*product.Product, error) {
+func CreateProduct(m *product.Product) (*product.Product, error) {
 	sess := database.GetSession()
 	newProduct := protoToDB(m, &Product{}).(*Product)
 
@@ -70,7 +70,7 @@ func createProduct(m *product.Product) (*product.Product, error) {
 	return m, nil
 }
 
-func getProductFromDB(id int32) (*product.Product, error) {
+func GetProductFromDB(id int32) (*product.Product, error) {
 	sess := database.GetSession()
 	var dbProduct Product
 
@@ -85,7 +85,7 @@ func getProductFromDB(id int32) (*product.Product, error) {
 	return m, nil
 }
 
-func updateProductInDB(m *product.Product) (*product.Product, error) {
+func UpdateProductInDB(m *product.Product) (*product.Product, error) {
 	sess := database.GetSession()
 	var dbProduct Product
 
@@ -104,7 +104,7 @@ func updateProductInDB(m *product.Product) (*product.Product, error) {
 	return m, nil
 }
 
-func deleteProductFromDB(id int32) error {
+func DeleteProductFromDB(id int32) error {
 	sess := database.GetSession()
 
 	res := sess.Collection("products").Find(db.Cond{"id": id})

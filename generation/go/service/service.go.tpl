@@ -1,18 +1,31 @@
-package {{.ServiceName  | lower}}
+package service
 
 import (
-	"{{.ProjectName}}/gen/proto/{{.ServiceName  | lower}}"
+	"{{.ProjectName}}/pkg/model"
+	"{{.ProjectName}}/gen/proto/{{.ServiceName | lower}}"
+	"{{.ProjectName}}/gen/proto/{{.ServiceName | lower}}/{{.ServiceName | lower}}connect"
 	"context"
+	"fmt"
+	"net/http"
 
 	"github.com/bufbuild/connect-go"
 )
 
-type {{.ServiceType}} struct {
+type {{.ServiceName}}Service struct {
 	// Add any fields if needed
 }
 
-func (s *{{.ServiceType}}) Create{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Create{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Create{{.ServiceName}}Response], error) {
-	new{{.ServiceName}}, err := create{{.ServiceName}}(req.Msg.{{.ServiceName}})
+func init() {
+	fmt.Println("Registering {{.ServiceName}}Service")
+	RegisterService(&{{.ServiceName}}Service{})
+}
+
+func (s *{{.ServiceName}}Service) Register(interceptors connect.Option) (string, http.Handler) {
+	return {{.ServiceName | lower}}connect.New{{.ServiceName}}ServiceHandler(s, interceptors)
+}
+
+func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Create{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Create{{.ServiceName}}Response], error) {
+	new{{.ServiceName}}, err := model.Create{{.ServiceName}}(req.Msg.{{.ServiceName}})
 	if err != nil {
 		return nil, err
 	}
@@ -22,8 +35,8 @@ func (s *{{.ServiceType}}) Create{{.ServiceName}}(ctx context.Context, req *conn
 	}), nil
 }
 
-func (s *{{.ServiceType}}) Get{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Get{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Get{{.ServiceName}}Response], error) {
-	u, err := get{{.ServiceName}}FromDB(req.Msg.Id)
+func (s *{{.ServiceName}}Service) Get{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Get{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Get{{.ServiceName}}Response], error) {
+	u, err := model.Get{{.ServiceName}}FromDB(req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -33,8 +46,8 @@ func (s *{{.ServiceType}}) Get{{.ServiceName}}(ctx context.Context, req *connect
 	}), nil
 }
 
-func (s *{{.ServiceType}}) Update{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Update{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Update{{.ServiceName}}Response], error) {
-	updated{{.ServiceName}}, err := update{{.ServiceName}}InDB(req.Msg.{{.ServiceName}})
+func (s *{{.ServiceName}}Service) Update{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Update{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Update{{.ServiceName}}Response], error) {
+	updated{{.ServiceName}}, err := model.Update{{.ServiceName}}InDB(req.Msg.{{.ServiceName}})
 	if err != nil {
 		return nil, err
 	}
@@ -44,8 +57,8 @@ func (s *{{.ServiceType}}) Update{{.ServiceName}}(ctx context.Context, req *conn
 	}), nil
 }
 
-func (s *{{.ServiceType}}) Delete{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Delete{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Delete{{.ServiceName}}Response], error) {
-	err := delete{{.ServiceName}}FromDB(req.Msg.Id)
+func (s *{{.ServiceName}}Service) Delete{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Delete{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Delete{{.ServiceName}}Response], error) {
+	err := model.Delete{{.ServiceName}}FromDB(req.Msg.Id)
 	if err != nil {
 		return nil, err
 	}

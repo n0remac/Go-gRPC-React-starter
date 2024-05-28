@@ -8,9 +8,9 @@ import (
 	"strings"
 	"text/template"
 
-	"gopkg.in/yaml.v3"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"gopkg.in/yaml.v3"
 )
 
 type Field struct {
@@ -33,6 +33,10 @@ func title(s string) string {
 	return cases.Title(language.English).String(s)
 }
 
+func minus1(n int) int {
+	return n - 1
+}
+
 func main() {
 	file, err := os.Open("../../schema.yaml")
 	if err != nil {
@@ -51,8 +55,8 @@ func main() {
 		panic(err)
 	}
 
-	tmplPath := "database.go.tpl"
-	tmpl, err := template.New("database.go.tpl").Funcs(template.FuncMap{
+	tmplPath := "create_table.go.tpl"
+	tmpl, err := template.New("create_table.go.tpl").Funcs(template.FuncMap{
 		"sqlType": func(fieldType string) string {
 			switch fieldType {
 			case "int32":
@@ -63,15 +67,16 @@ func main() {
 				return fieldType
 			}
 		},
-		"lower": strings.ToLower,
-		"title": title,
+		"lower":  strings.ToLower,
+		"title":  title,
+		"minus1": minus1,
 	}).ParseFiles(tmplPath)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, model := range schema.Models {
-		outputFilePath := filepath.Join("../../../pkg", "database", "create_"+strings.ToLower(model.Name)+".go")
+		outputFilePath := filepath.Join("../../../pkg/database", "create_"+strings.ToLower(model.Name)+".go")
 		outputDir := filepath.Dir(outputFilePath)
 		if err := os.MkdirAll(outputDir, 0755); err != nil {
 			panic(err)

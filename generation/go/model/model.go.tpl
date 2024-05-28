@@ -3,7 +3,6 @@ package model
 import (
 	"{{.ProjectName}}/gen/proto/{{.ModelName | lower}}"
 	"{{.ProjectName}}/pkg/database"
-	"reflect"
 
 	"github.com/upper/db/v4"
 )
@@ -14,51 +13,9 @@ type {{.ModelName}} struct {
 {{- end }}
 }
 
-func protoToDB(protoMsg interface{}, dbStruct interface{}) interface{} {
-	protoVal := reflect.ValueOf(protoMsg).Elem()
-	dbVal := reflect.ValueOf(dbStruct).Elem()
-
-	for i := 0; i < protoVal.NumField(); i++ {
-		protoField := protoVal.Field(i)
-		dbField := dbVal.FieldByName(protoVal.Type().Field(i).Name)
-
-		if dbField.IsValid() && dbField.CanSet() {
-			switch dbField.Kind() {
-			case reflect.Int, reflect.Int32:
-				dbField.SetInt(protoField.Int())
-			case reflect.String:
-				dbField.SetString(protoField.String())
-			}
-		}
-	}
-
-	return dbStruct
-}
-
-func dbToProto(dbStruct interface{}, protoMsg interface{}) interface{} {
-	dbVal := reflect.ValueOf(dbStruct).Elem()
-	protoVal := reflect.ValueOf(protoMsg).Elem()
-
-	for i := 0; i < dbVal.NumField(); i++ {
-		dbField := dbVal.Field(i)
-		protoField := protoVal.FieldByName(dbVal.Type().Field(i).Name)
-
-		if protoField.IsValid() && protoField.CanSet() {
-			switch protoField.Kind() {
-			case reflect.Int32:
-				protoField.SetInt(dbField.Int())
-			case reflect.String:
-				protoField.SetString(dbField.String())
-			}
-		}
-	}
-
-	return protoMsg
-}
-
 func Create{{.ModelName}}(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
 	sess := database.GetSession()
-	new{{.ModelName}} := protoToDB(m, &{{.ModelName}}{}).(*{{.ModelName}})
+	new{{.ModelName}} := ProtoToDB(m, &{{.ModelName}}{}).(*{{.ModelName}})
 
 	err := sess.Collection("{{.ModelName | lower}}s").InsertReturning(new{{.ModelName}})
 	if err != nil {
@@ -79,7 +36,7 @@ func Get{{.ModelName}}FromDB(id int32) (*{{.ModelName | lower}}.{{.ModelName}}, 
 		return nil, err
 	}
 
-	m := dbToProto(&db{{.ModelName}}, &{{.ModelName | lower}}.{{.ModelName}}{}).(*{{.ModelName | lower}}.{{.ModelName}})
+	m := DbToProto(&db{{.ModelName}}, &{{.ModelName | lower}}.{{.ModelName}}{}).(*{{.ModelName | lower}}.{{.ModelName}})
 	m.Id = int32(db{{.ModelName}}.ID)
 	return m, nil
 }
@@ -94,7 +51,7 @@ func Update{{.ModelName}}InDB(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.Mod
 		return nil, err
 	}
 
-	updated{{.ModelName}} := protoToDB(m, &db{{.ModelName}}).(*{{.ModelName}})
+	updated{{.ModelName}} := ProtoToDB(m, &db{{.ModelName}}).(*{{.ModelName}})
 	err = res.Update(updated{{.ModelName}})
 	if err != nil {
 		return nil, err

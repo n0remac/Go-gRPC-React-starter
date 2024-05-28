@@ -1,4 +1,4 @@
-package {{.ModelName | lower}}
+package model
 
 import (
 	"{{.ProjectName}}/gen/proto/{{.ModelName | lower}}"
@@ -56,7 +56,7 @@ func dbToProto(dbStruct interface{}, protoMsg interface{}) interface{} {
 	return protoMsg
 }
 
-func create{{.ModelName}}(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
+func Create{{.ModelName}}(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
 	sess := database.GetSession()
 	new{{.ModelName}} := protoToDB(m, &{{.ModelName}}{}).(*{{.ModelName}})
 
@@ -69,7 +69,7 @@ func create{{.ModelName}}(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelNa
 	return m, nil
 }
 
-func get{{.ModelName}}FromDB(id int32) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
+func Get{{.ModelName}}FromDB(id int32) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
 	sess := database.GetSession()
 	var db{{.ModelName}} {{.ModelName}}
 
@@ -84,7 +84,7 @@ func get{{.ModelName}}FromDB(id int32) (*{{.ModelName | lower}}.{{.ModelName}}, 
 	return m, nil
 }
 
-func update{{.ModelName}}InDB(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
+func Update{{.ModelName}}InDB(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
 	sess := database.GetSession()
 	var db{{.ModelName}} {{.ModelName}}
 
@@ -103,7 +103,7 @@ func update{{.ModelName}}InDB(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.Mod
 	return m, nil
 }
 
-func delete{{.ModelName}}FromDB(id int32) error {
+func Delete{{.ModelName}}FromDB(id int32) error {
 	sess := database.GetSession()
 
 	res := sess.Collection("{{.ModelName | lower}}s").Find(db.Cond{"id": id})

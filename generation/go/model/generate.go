@@ -71,7 +71,7 @@ func main() {
 	}
 
 	for _, model := range schema.Models {
-		outputFilePath := filepath.Join("../../../pkg", strings.ToLower(model.Name), "model.go")
+		outputFilePath := filepath.Join("../../../pkg/model", strings.ToLower(model.Name)+".go")
 		outputDir := filepath.Dir(outputFilePath)
 		if err := os.MkdirAll(outputDir, 0755); err != nil {
 			panic(err)

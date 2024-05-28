@@ -51,14 +51,14 @@ func main() {
 
 	database.InitDB()
 	service.InitServices(apiRoot, interceptors)
-	userService := &user.UserService{}
+	userService := &user.UserService{} //TODO generate this
 
 	imageServer := http.FileServer(http.Dir("./pkg/images"))
 	apiRoot.Handle("/images/", http.StripPrefix("/images/", imageServer))
 
 	apiRoot.Handle(userconnect.NewUserServiceHandler(userService, interceptors))
-	// apiRoot.Handle(productconnect.NewProductServiceHandler(productService, interceptors))
 
+	// TODO move reflector to serviceRegistry so generated code can access it
 	reflector := grpcreflect.NewStaticReflector(
 		"user.userService",
 	)

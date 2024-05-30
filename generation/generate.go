@@ -13,6 +13,8 @@ func main() {
 		"go/model",
 		"go/service",
 		"proto",
+		"react",
+		"react/services",
 	}
 
 	// Iterate over the directories and run each generate.go file

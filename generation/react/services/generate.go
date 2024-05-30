@@ -13,6 +13,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type Service struct {
+	ServiceName string
+}
+
 type Field struct {
 	Name          string `yaml:"name"`
 	Type          string `yaml:"type"`
@@ -33,12 +37,8 @@ func title(s string) string {
 	return cases.Title(language.English).String(s)
 }
 
-func wrapInBraces(s string) string {
-	return "{" + s + "}"
-}
-
 func main() {
-	file, err := os.Open("../schema.yaml")
+	file, err := os.Open("../../schema.yaml")
 	if err != nil {
 		panic(err)
 	}
@@ -55,19 +55,17 @@ func main() {
 		panic(err)
 	}
 
-	tmplPath := "admin.tsx.tpl"
-	tmpl, err := template.New("admin.tsx.tpl").Funcs(template.FuncMap{
-		"lower":        strings.ToLower,
-		"title":        title,
-		"wrapInBraces": wrapInBraces,
+	tmplPath := "service.ts.tpl"
+	tmpl, err := template.New("service.ts.tpl").Funcs(template.FuncMap{
+		"title": title,
+		"lower": strings.ToLower,
 	}).ParseFiles(tmplPath)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, model := range schema.Models {
-		// outputFilePath := filepath.Join("../../../src/pages", strings.ToLower(model.Name)+"Page.tsx")
-		outputFilePath := filepath.Join("../../frontend/src/pages/admin", strings.ToLower(model.Name)+"AdminPage.tsx")
+		outputFilePath := filepath.Join("../../../frontend/src/services", model.Name+"Service.ts")
 		outputDir := filepath.Dir(outputFilePath)
 		if err := os.MkdirAll(outputDir, 0755); err != nil {
 			panic(err)
@@ -79,9 +77,8 @@ func main() {
 		}
 		defer file.Close()
 
-		data := map[string]interface{}{
-			"ModelName": model.Name,
-			"Fields":    model.Fields,
+		data := Service{
+			ServiceName: model.Name,
 		}
 
 		err = tmpl.Execute(file, data)

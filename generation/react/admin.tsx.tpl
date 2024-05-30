@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { {{.ModelName | lower}}Service } from '../../service';
+import { {{.ModelName | lower}}Service } from '../../services/{{.ModelName}}Service';
 import { 
     Create{{.ModelName}}Request, 
     Get{{.ModelName}}Request, 

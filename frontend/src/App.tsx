@@ -1,30 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './pages/user/Login';
-import Register from './pages/user/Register';
-import ProductPage from './pages/product/Product';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
+import AppRouter from './AppRouter';
 
 export default function App() {
     return (
         <Router>
             <div>
-                <nav>
-                    <ul style={{ listStyleType: 'none', margin: 0, padding: 0, overflow: 'hidden', backgroundColor: '#333' }}>
-                        <li style={{ float: 'right' }}>
-                            <Link to="/login" style={{ display: 'block', color: 'white', textAlign: 'center', padding: '14px 16px', textDecoration: 'none' }}>Login</Link>
-                        </li>
-                        <li style={{ float: 'right' }}>
-                            <Link to="/register" style={{ display: 'block', color: 'white', textAlign: 'center', padding: '14px 16px', textDecoration: 'none' }}>Register</Link>
-                        </li>
-                        
-                    </ul>
-                </nav>
-
-                <Routes>
-                    <Route path="/login" element={< Login />} />
-                    <Route path="/register" element={< Register />} />
-                    <Route path="/product" element={< ProductPage />} />
-                </Routes>
+                <AppRouter />
             </div>
         </Router>
     );

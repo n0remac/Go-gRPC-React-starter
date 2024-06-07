@@ -16,7 +16,9 @@ const {{.ModelName}}Page = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const parsedValue = name === "id"{{ range .Fields }} || name === "{{ .Name }}"{{ end }} ? parseInt(value, 10) : value;
+        const parsedValue = {{ range .Fields }}
+        {{ if isIntegerType .Type }}name === "{{.Name}}" || {{end}}
+        {{ end }} false ? parseInt(value, 10) : value;
         set{{.ModelName}}(prev{{.ModelName}} => {
             const updated{{.ModelName}} = { ...prev{{.ModelName}} } as {{.ModelName}};
             (updated{{.ModelName}} as any)[name] = parsedValue;

@@ -37,6 +37,10 @@ func wrapInBraces(s string) string {
 	return "{" + s + "}"
 }
 
+func isIntegerType(fieldType string) bool {
+	return fieldType == "int32" || fieldType == "int64" || fieldType == "uint32" || fieldType == "uint64"
+}
+
 func main() {
 	file, err := os.Open("../schema.yaml")
 	if err != nil {
@@ -60,13 +64,13 @@ func main() {
 		"lower":        strings.ToLower,
 		"title":        title,
 		"wrapInBraces": wrapInBraces,
+		"isIntegerType": isIntegerType,
 	}).ParseFiles(tmplPath)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, model := range schema.Models {
-		// outputFilePath := filepath.Join("../../../src/pages", strings.ToLower(model.Name)+"Page.tsx")
 		outputFilePath := filepath.Join("../../frontend/src/pages/admin", strings.ToLower(model.Name)+"AdminPage.tsx")
 		outputDir := filepath.Dir(outputFilePath)
 		if err := os.MkdirAll(outputDir, 0755); err != nil {

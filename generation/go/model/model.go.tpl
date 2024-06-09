@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/json"
 	"{{.ProjectName}}/gen/proto/{{.ModelName | lower}}"
 	"{{.ProjectName}}/pkg/database"
 
@@ -8,16 +9,23 @@ import (
 )
 
 type {{.ModelName}} struct {
-{{- range .Fields }}
-	{{ if eq .Name "id" }}ID int `db:"id,omitempty"`{{ else }}{{ .Name | title }} {{ sqlType .Type }} `db:"{{ .Name | lower }}"`{{ end }}
-{{- end }}
+	ID   int    `db:"id,omitempty"`
+	Data string `db:"data"`
 }
 
 func Create{{.ModelName}}(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
 	sess := database.GetSession()
-	new{{.ModelName}} := ProtoToDB(m, &{{.ModelName}}{}).(*{{.ModelName}})
 
-	err := sess.Collection("{{.ModelName | lower}}s").InsertReturning(new{{.ModelName}})
+	data, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+
+	new{{.ModelName}} := &{{.ModelName}}{
+		Data: string(data),
+	}
+
+	err = sess.Collection("{{.ModelName | lower}}s").InsertReturning(new{{.ModelName}})
 	if err != nil {
 		return nil, err
 	}
@@ -36,9 +44,14 @@ func Get{{.ModelName}}FromDB(id int32) (*{{.ModelName | lower}}.{{.ModelName}}, 
 		return nil, err
 	}
 
-	m := DbToProto(&db{{.ModelName}}, &{{.ModelName | lower}}.{{.ModelName}}{}).(*{{.ModelName | lower}}.{{.ModelName}})
+	var m {{.ModelName | lower}}.{{.ModelName}}
+	err = json.Unmarshal([]byte(db{{.ModelName}}.Data), &m)
+	if err != nil {
+		return nil, err
+	}
+
 	m.Id = int32(db{{.ModelName}}.ID)
-	return m, nil
+	return &m, nil
 }
 
 func Update{{.ModelName}}InDB(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.ModelName | lower}}.{{.ModelName}}, error) {
@@ -51,7 +64,15 @@ func Update{{.ModelName}}InDB(m *{{.ModelName | lower}}.{{.ModelName}}) (*{{.Mod
 		return nil, err
 	}
 
-	updated{{.ModelName}} := ProtoToDB(m, &db{{.ModelName}}).(*{{.ModelName}})
+	data, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+
+	updated{{.ModelName}} := &{{.ModelName}}{
+		ID:   db{{.ModelName}}.ID,
+		Data: string(data),
+	}
 	err = res.Update(updated{{.ModelName}})
 	if err != nil {
 		return nil, err

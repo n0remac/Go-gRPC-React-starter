@@ -55,8 +55,8 @@ func main() {
 		panic(err)
 	}
 
-	tmplPath := "create_table.go.tpl"
-	tmpl, err := template.New("create_table.go.tpl").Funcs(template.FuncMap{
+	tmplPath := "table.go.tpl"
+	tmpl, err := template.New("table.go.tpl").Funcs(template.FuncMap{
 		"sqlType": func(fieldType string) string {
 			switch fieldType {
 			case "int32":
@@ -76,7 +76,7 @@ func main() {
 	}
 
 	for _, model := range schema.Models {
-		outputFilePath := filepath.Join("../../../pkg/database", "create_"+strings.ToLower(model.Name)+".go")
+		outputFilePath := filepath.Join("../../../pkg/database", strings.ToLower(model.Name)+".go")
 		outputDir := filepath.Dir(outputFilePath)
 		if err := os.MkdirAll(outputDir, 0755); err != nil {
 			panic(err)

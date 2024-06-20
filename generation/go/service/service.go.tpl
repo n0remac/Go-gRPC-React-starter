@@ -3,25 +3,13 @@ package service
 import (
 	"{{.ProjectName}}/pkg/model"
 	"{{.ProjectName}}/gen/proto/{{.ServiceName | lower}}"
-	"{{.ProjectName}}/gen/proto/{{.ServiceName | lower}}/{{.ServiceName | lower}}connect"
 	"context"
-	"fmt"
-	"net/http"
 
 	"github.com/bufbuild/connect-go"
 )
 
 type {{.ServiceName}}Service struct {
 	// Add any fields if needed
-}
-
-func init() {
-	fmt.Println("Registering {{.ServiceName}}Service")
-	RegisterService(&{{.ServiceName}}Service{})
-}
-
-func (s *{{.ServiceName}}Service) Register(interceptors connect.Option) (string, http.Handler) {
-	return {{.ServiceName | lower}}connect.New{{.ServiceName}}ServiceHandler(s, interceptors)
 }
 
 func (s *{{.ServiceName}}Service) Create{{.ServiceName}}(ctx context.Context, req *connect.Request[{{.ServiceName | lower}}.Create{{.ServiceName}}Request]) (*connect.Response[{{.ServiceName | lower}}.Create{{.ServiceName}}Response], error) {

@@ -41,14 +41,15 @@ func main() {
 
 	var schema Schema
 	err = yaml.Unmarshal(yamlData, &schema)
-	if err != nil {
+	if (err != nil) {
 		panic(err)
 	}
 
-	tmplPath := "service.go.tpl"
-	tmpl, err := template.New("service.go.tpl").Funcs(template.FuncMap{
+	// Generate service files
+	serviceTmplPath := "service.go.tpl"
+	serviceTmpl, err := template.New("service.go.tpl").Funcs(template.FuncMap{
 		"lower": strings.ToLower,
-	}).ParseFiles(tmplPath)
+	}).ParseFiles(serviceTmplPath)
 	if err != nil {
 		panic(err)
 	}
@@ -73,11 +74,52 @@ func main() {
 			"Fields":      model.Fields,
 		}
 
-		err = tmpl.Execute(file, data)
+		err = serviceTmpl.Execute(file, data)
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Printf("Generated %s\n", outputFilePath)
 	}
+
+	// Generate setup.go file for services
+	setupServiceTmplPath := "setup.go.tpl"
+	setupServiceTmpl, err := template.New("setup.go.tpl").Funcs(template.FuncMap{
+		"lower": strings.ToLower,
+	}).ParseFiles(setupServiceTmplPath)
+	if err != nil {
+		panic(err)
+	}
+
+	setupServiceFilePath := filepath.Join("../../../pkg/service", "setup.go")
+	setupServiceFile, err := os.Create(setupServiceFilePath)
+	if err != nil {
+		panic(err)
+	}
+	defer setupServiceFile.Close()
+
+	type ServiceData struct {
+		ServiceName string
+		ServiceType string
+		ProjectName string
+	}
+
+	var serviceData []ServiceData
+	for _, model := range schema.Models {
+		serviceData = append(serviceData, ServiceData{
+			ServiceName: model.Name,
+			ServiceType: model.Name + "Service",
+			ProjectName: "Go-gRPC-React-starter",
+		})
+	}
+
+	err = setupServiceTmpl.Execute(setupServiceFile, map[string]interface{}{
+		"Services":    serviceData,
+		"ProjectName": "Go-gRPC-React-starter",
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Generated %s\n", setupServiceFilePath)
 }

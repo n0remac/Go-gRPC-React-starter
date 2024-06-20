@@ -55,6 +55,7 @@ func main() {
 		panic(err)
 	}
 
+	// Generate table files
 	tmplPath := "table.go.tpl"
 	tmpl, err := template.New("table.go.tpl").Funcs(template.FuncMap{
 		"sqlType": func(fieldType string) string {
@@ -100,4 +101,25 @@ func main() {
 
 		fmt.Printf("Generated %s\n", outputFilePath)
 	}
+
+	// Generate setup.go file
+	setupTmplPath := "setup.go.tpl"
+	setupTmpl, err := template.ParseFiles(setupTmplPath)
+	if err != nil {
+		panic(err)
+	}
+
+	setupFilePath := filepath.Join("../../../pkg/database", "setup.go")
+	setupFile, err := os.Create(setupFilePath)
+	if err != nil {
+		panic(err)
+	}
+	defer setupFile.Close()
+
+	err = setupTmpl.Execute(setupFile, schema)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Generated %s\n", setupFilePath)
 }

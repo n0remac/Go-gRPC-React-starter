@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { userService } from '../../service'; // Adjust the import path as needed
+import { userService } from '../../services/service'; // Adjust the import path as needed
 import { CreateUserRequest, User } from '../../rpc/proto/user/user_pb';
 
 export const Register = () => {

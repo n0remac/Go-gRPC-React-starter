@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cd frontend && DEV=true node esbuild.mjs",
-    "build": "cd frontend && DEV=false node esbuild.mjs"
+    "dev": "cd frontend && node generatePages.js && DEV=true node esbuild.mjs",
+    "build": "cd frontend && node generatePages.js && DEV=false node esbuild.mjs",
+    "start": "cd frontend && node generatePages.js && react-scripts start"
   },
   "author": "",
   "license": "ISC",

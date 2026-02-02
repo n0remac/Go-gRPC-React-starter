@@ -5,6 +5,7 @@ package main
 import (
 	"Go-gRPC-React-starter/gen/proto/user/userconnect"
 	"Go-gRPC-React-starter/pkg/database"
+	"Go-gRPC-React-starter/pkg/service"
 	"Go-gRPC-React-starter/pkg/user"
 	"context"
 	"fmt"
@@ -49,13 +50,15 @@ func main() {
 	apiRoot := http.NewServeMux()
 
 	database.InitDB()
-	userService := &user.UserService{}
+	service.InitServices(apiRoot, interceptors)
+	userService := &user.UserService{} //TODO generate this
 
 	imageServer := http.FileServer(http.Dir("./pkg/images"))
 	apiRoot.Handle("/images/", http.StripPrefix("/images/", imageServer))
 
 	apiRoot.Handle(userconnect.NewUserServiceHandler(userService, interceptors))
 
+	// TODO move reflector to serviceRegistry so generated code can access it
 	reflector := grpcreflect.NewStaticReflector(
 		"user.userService",
 	)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { userService } from '../../service';
+import { userService } from '../../services/service';
 import { LoginRequest } from '../../rpc/proto/user/user_pb';
 
 export const Login = () => {
